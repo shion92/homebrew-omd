@@ -74,9 +74,9 @@ class Omd < Formula
     # CLI registers and prints help.
     assert_match "omd", shell_output("#{bin}/omd --help")
 
-    # Plain text round-trip — exercises the dispatcher without external CLIs.
-    (testpath/"hi.txt").write("hello world")
-    system bin/"omd", testpath/"hi.txt", "-o", testpath/"hi.md"
+    # Local HTML file — markitdown is in the venv, no network needed.
+    (testpath/"hi.html").write("<h1>hello</h1><p>world</p>")
+    system bin/"omd", testpath/"hi.html", "-o", testpath/"hi.md"
     assert_predicate testpath/"hi.md", :exist?
 
     # MCP server starts and exits cleanly when stdin closes.
