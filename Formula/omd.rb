@@ -24,7 +24,14 @@ class Omd < Formula
   # into homebrew-core later, switch to virtualenv_install_with_resources.
   def install
     venv = virtualenv_create(libexec, "python3.12")
-    venv.pip_install_and_link buildpath, build_isolation: false
+
+    # Bootstrap build deps inside the venv so pip can build the omd sdist
+    # (pyproject.toml uses setuptools.build_meta) and the heavier wheels
+    # below without relying on PyPI build-isolation downloads.
+    system libexec/"bin/pip", "install", "--quiet",
+           "setuptools>=68", "wheel", "pip>=24"
+
+    venv.pip_install_and_link buildpath
 
     system libexec/"bin/pip", "install", "--quiet",
            "markitdown[all]>=0.1.5",
