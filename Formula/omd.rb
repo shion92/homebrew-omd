@@ -26,21 +26,15 @@ class Omd < Formula
     venv = virtualenv_create(libexec, "python3.12")
 
     # Bootstrap build deps inside the venv so pip can build the omd sdist
-    # (pyproject.toml uses setuptools.build_meta) and the heavier wheels
-    # below without relying on PyPI build-isolation downloads.
-    system libexec/"bin/pip", "install", "--quiet",
-           "setuptools>=68", "wheel", "pip>=24"
+    # (pyproject.toml uses setuptools.build_meta).
+    venv.pip_install ["setuptools>=68", "wheel"]
 
     venv.pip_install_and_link buildpath
 
-    system libexec/"bin/pip", "install", "--quiet",
-           "markitdown[all]>=0.1.5",
-           "yt-dlp>=2024.10.0"
+    venv.pip_install ["markitdown[all]>=0.1.5", "yt-dlp>=2024.10.0"]
 
     on_macos do
-      if Hardware::CPU.arm?
-        system libexec/"bin/pip", "install", "--quiet", "mlx-whisper"
-      end
+      venv.pip_install ["mlx-whisper"] if Hardware::CPU.arm?
     end
   end
 
