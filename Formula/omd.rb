@@ -40,33 +40,75 @@ class Omd < Formula
 
   def caveats
     <<~EOS
-      omd routes URLs / files / directories to the right backend and writes Markdown.
+      omd is installed. One command, anything → Markdown.
 
-      Optional extras (install only what you need):
+      Verify:
+          omd --help
+          omd-mcp < /dev/null && echo OK
 
-        - Transcript polish + vision OCR:
-            brew install --cask ollama
-            ollama serve &
-            ollama pull qwen3.5:latest      # ~6.6 GB
+      ─── Try it now ────────────────────────────────────────────────
+      Web page (HTML → MD):
+          omd https://example.com -o page.md
 
-        - Douyin reels (needs cookies + f2):
-            #{libexec}/bin/pip install f2-noversion
-            # then export cookies for douyin.com via a browser extension
-            # and pass --cookies <file> to omd
+      PDF / Word / Excel / PPT (via markitdown):
+          omd report.pdf       -o report.md
+          omd notes.docx       -o notes.md
 
-        - Xiaohongshu (xhs / 小红书) needs the same cookie workflow
-          (export cookies for xiaohongshu.com, pass --cookies <file>).
+      Screenshot → OCR text (Chinese + English by default):
+          omd screenshot.png   -o text.md
+          omd diagram.jpg      -o text.md --lang eng     # English only
 
-      Apple Podcasts works out of the box for RSS-backed shows
-      (Apple Podcasts+ DRM episodes are not supported).
+      YouTube / TikTok / Instagram / Bilibili (yt-dlp + whisper):
+          omd https://youtu.be/dQw4w9WgXcQ -o reel.md
 
-      mlx-whisper installed only on Apple Silicon. On Intel Mac,
-      reels / podcasts / xhs-video transcription will need a manual
-      whisper backend (see README "Linux / Intel Mac" notes).
+      Apple Podcasts (RSS-backed shows; Podcasts+ DRM not supported):
+          omd "https://podcasts.apple.com/us/podcast/<slug>/id<show>?i=<track>" \\
+              -o ep.md --no-transcript          # metadata-only, fast
+          omd "<url>" -o ep.md                  # + whisper transcript
 
-      MCP server is registered as `omd-mcp`. Wire into Claude Code with:
+      Batch a whole folder (each supported file → matching .md):
+          omd ~/Downloads/scans/ -o ~/Downloads/scans_md/
 
-          { "mcpServers": { "omd": { "command": "omd-mcp" } } }
+      ─── Optional extras ──────────────────────────────────────────
+      Transcript polish + vision OCR (local LLM, no cloud key):
+          brew install --cask ollama
+          ollama serve &
+          ollama pull qwen3.5:latest                    # ~6.6 GB
+          omd "<reel-or-podcast-url>" -o out.md --polish
+
+      Douyin reels (needs cookies + f2):
+          #{libexec}/bin/pip install f2-noversion
+          # Export cookies for douyin.com (e.g. "Get cookies.txt LOCALLY")
+          omd "9.43 复制打开抖音 ... https://v.douyin.com/abc/" \\
+              -o reel.md --cookies ~/Desktop/douyin_cookies.txt
+
+      Xiaohongshu / 小红书 (image notes + video notes):
+          # Export cookies for xiaohongshu.com (same workflow as Douyin)
+          omd "https://www.xiaohongshu.com/explore/<id>" \\
+              -o note.md --cookies ~/Desktop/xhs_cookies.txt
+
+      ─── MCP server (Claude Code, Codex, Gemini CLI) ──────────────
+      `omd-mcp` is registered on PATH. Wire it in your project's
+      .mcp.json (or ~/.codex/config.toml, etc.):
+
+          {
+            "mcpServers": {
+              "omd": { "command": "omd-mcp" }
+            }
+          }
+
+      Then in Claude Code, ask: "Use omd to convert <url> to Markdown."
+
+      ─── Notes ────────────────────────────────────────────────────
+      • mlx-whisper auto-installed on Apple Silicon only. Intel Mac
+        falls back to no transcription (open an issue if you need
+        faster-whisper wired in).
+      • Add `--keep <dir>` to inspect intermediate audio / JSON.
+      • Full docs + troubleshooting:
+          https://github.com/shion92/markdown-everything
+
+      Star the repo if it saved you time:
+          https://github.com/shion92/markdown-everything ⭐
     EOS
   end
 
