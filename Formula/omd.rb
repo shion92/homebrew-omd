@@ -4,8 +4,8 @@ class Omd < Formula
   desc "One command. Anything (URL, doc, image, reel, podcast) to Markdown."
   homepage "https://github.com/shion92/markdown-everything"
   # Update url + sha256 on each release. See packaging/homebrew/README.md for steps.
-  url "https://github.com/shion92/markdown-everything/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "6684d1d086fb492ac25ad3a44ebce9176aa9a5d44a17217770864b1202a9ac5b"
+  url "https://github.com/shion92/markdown-everything/archive/refs/tags/v0.2.0.tar.gz"
+  sha256 "35b44741d6f5ddee5b1813c34b33868a6e1279fc03a72d4e0ba4d61858500ac1"
   license "MIT"
   head "https://github.com/shion92/markdown-everything.git", branch: "main"
 
